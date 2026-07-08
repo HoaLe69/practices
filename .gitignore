@@ -1,0 +1,38 @@
+# Secrets / env
+.env
+.env.*
+*.pem
+*.key
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Go
+bin/
+*.exe
+*.test
+
+# Rust
+target/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
