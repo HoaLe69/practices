@@ -43,6 +43,29 @@ Tear down when done:
 docker compose down
 ```
 
+## Gotcha: proxy loop → "Request Header Or Cookie Too Large"
+
+If you set `proxy_pass http://localhost:80;` inside the Nginx container, you get a
+`400 Request Header Or Cookie Too Large` — even though your browser sent nothing big.
+
+**Why:** `localhost` inside a container refers to *that same container*, not the host
+and not the `backend` service. So Nginx proxies the request back into its own `server`
+block, which proxies to `localhost` again → an infinite proxy loop. Because
+`proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;` appends the client IP on
+every hop, that header grows on each loop iteration until it exceeds Nginx's header
+buffer (`large_client_header_buffers`, default `4 8k`). Nginx then rejects the request.
+The error is a *symptom of the loop*, not a real oversized cookie.
+
+**Fix:** proxy to the backend by its Docker service name, which resolves to the *other*
+container:
+
+```nginx
+proxy_pass http://backend:80;
+```
+
+To reach a service running on the **Windows host** (a different goal), use
+`http://host.docker.internal:<port>` instead.
+
 ## What I learned
 
 - (fill in after doing the practice)
