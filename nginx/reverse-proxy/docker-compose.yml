@@ -6,12 +6,24 @@ services:
       - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./assets:/usr/share/nginx/media
     depends_on:
-      - backend
+      - backend-1
+      - backend-2
 
   # A tiny backend that echoes request details, so you can SEE
   # which headers Nginx forwards and how the proxy rewrites things.
-  backend:
-    image: traefik/whoami
+  backend-1:
+    image: nmatsui/hello-world-api
     # No ports exposed to the host: it's only reachable *through* the proxy,
     # which is the whole point of a reverse proxy.
+  
+  backend-2:
+    image : abdennour/dummy-rest-api-example
+    environment:
+      - ADMIN_PASSWORD=pass123
+
+  backend-3:
+    image : l4rs71/todo-api
+  # backend-3:
+  #   image : whoami
